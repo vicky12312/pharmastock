@@ -1,0 +1,276 @@
+{
+  "info": {
+    "name": "Pharmacy Inventory System",
+    "description": "Complete API coverage for the Pharmacy Inventory System including Catalog, Warehouse, Operations, Compliance, and Analytics.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080/api"
+    },
+    {
+      "key": "jwt_token",
+      "value": "YOUR_TOKEN_HERE"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{base_url}}/auth/register", "host": [ "{{base_url}}" ], "path": [ "auth", "register" ] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@pharmacy.com\",\n  \"password\": \"password123\",\n  \"role\": \"ADMIN\"\n}" }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": { "exec": [ "var jsonData = pm.response.json();", "pm.environment.set(\"jwt_token\", jsonData.token);" ] }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{base_url}}/auth/login", "host": [ "{{base_url}}" ], "path": [ "auth", "login" ] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@pharmacy.com\",\n  \"password\": \"password123\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Formulary & Catalog",
+      "item": [
+        {
+          "name": "Drugs",
+          "item": [
+            {
+              "name": "Create Drug",
+              "request": { "method": "POST", "header": [ {"key": "Content-Type", "value": "application/json"} ], "url": { "raw": "{{base_url}}/v1/drugs", "host": [ "{{base_url}}" ], "path": [ "v1", "drugs" ] }, "body": { "mode": "raw", "raw": "{\n  \"genericName\": \"Paracetamol\",\n  \"brandName\": \"Panadol\",\n  \"strength\": \"500mg\",\n  \"form\": \"TABLET\",\n  \"atcCode\": \"N02BE01\",\n  \"controlClass\": \"NONE\",\n  \"storageClass\": \"AMBIENT\",\n  \"status\": \"ACTIVE\"\n}" } }
+            },
+            {
+              "name": "Get All Drugs",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/v1/drugs", "host": [ "{{base_url}}" ], "path": [ "v1", "drugs" ] } }
+            }
+          ]
+        },
+        {
+          "name": "UoM",
+          "item": [
+             {
+              "name": "Create UoM",
+              "request": { "method": "POST", "header": [ {"key": "Content-Type", "value": "application/json"} ], "url": { "raw": "{{base_url}}/v1/uom", "host": [ "{{base_url}}" ], "path": [ "v1", "uom" ] }, "body": { "mode": "raw", "raw": "{\n  \"code\": \"BOX\",\n  \"description\": \"Box of 100\"\n}" } }
+            }
+          ]
+        },
+        {
+          "name": "Items",
+          "item": [
+            {
+              "name": "Create Item",
+              "request": { "method": "POST", "header": [ {"key": "Content-Type", "value": "application/json"} ], "url": { "raw": "{{base_url}}/v1/items", "host": [ "{{base_url}}" ], "path": [ "v1", "items" ] }, "body": { "mode": "raw", "raw": "{\n  \"drugId\": 1,\n  \"packSize\": 100,\n  \"uomId\": 1,\n  \"conversionToEach\": 100,\n  \"barcode\": \"1234567890123\",\n  \"status\": \"ACTIVE\"\n}" } }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Setup & Purchasing",
+      "item": [
+        {
+          "name": "Locations",
+          "item": [
+            {
+              "name": "Create Location",
+              "request": { "method": "POST", "header": [ {"key": "Content-Type", "value": "application/json"} ], "url": { "raw": "{{base_url}}/v1/locations", "host": [ "{{base_url}}" ], "path": [ "v1", "locations" ] }, "body": { "mode": "raw", "raw": "{\n  \"name\": \"Main Store\",\n  \"type\": \"MAIN_STORE\",\n  \"status\": \"ACTIVE\"\n}" } }
+            }
+          ]
+        },
+        {
+          "name": "Vendors",
+          "item": [
+            {
+              "name": "Create Vendor",
+              "request": { "method": "POST", "header": [ {"key": "Content-Type", "value": "application/json"} ], "url": { "raw": "{{base_url}}/v1/vendors", "host": [ "{{base_url}}" ], "path": [ "v1", "vendors" ] }, "body": { "mode": "raw", "raw": "{\n  \"name\": \"Pharma Supplier Co\",\n  \"contactInfo\": \"supplier@test.com\",\n  \"rating\": 5,\n  \"status\": \"ACTIVE\"\n}" } }
+            }
+          ]
+        },
+        {
+          "name": "Purchase Orders",
+          "item": [
+            {
+              "name": "Create PO",
+              "request": { "method": "POST", "header": [ {"key": "Content-Type", "value": "application/json"} ], "url": { "raw": "{{base_url}}/v1/po", "host": [ "{{base_url}}" ], "path": [ "v1", "po" ] }, "body": { "mode": "raw", "raw": "{\n  \"vendorId\": 1,\n  \"locationId\": 1,\n  \"expectedDate\": \"2026-04-01T10:00:00\",\n  \"status\": \"DRAFT\",\n  \"items\": [\n    {\n      \"itemId\": 1,\n      \"orderedQty\": 50,\n      \"unitPrice\": 10.50\n    }\n  ]\n}" } }
+            },
+            {
+              "name": "Approve PO",
+              "request": { "method": "PUT", "url": { "raw": "{{base_url}}/v1/po/1/approve", "host": [ "{{base_url}}" ], "path": [ "v1", "po", "1", "approve" ] } }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Warehouse Operations",
+      "item": [
+        {
+          "name": "Goods Receipts (GRN)",
+          "item": [
+            {
+              "name": "Create GRN",
+              "request": { "method": "POST", "header": [ {"key": "Content-Type", "value": "application/json"} ], "url": { "raw": "{{base_url}}/v1/warehouse/grn", "host": [ "{{base_url}}" ], "path": [ "v1", "warehouse", "grn" ] }, "body": { "mode": "raw", "raw": "{\n  \"poId\": 1,\n  \"receivedBy\": \"Warehouse Staff\",\n  \"items\": [\n    {\n      \"poItemId\": 1,\n      \"itemId\": 1,\n      \"batchNumber\": \"BATCH-2026-X1\",\n      \"expiryDate\": \"2028-12-31T23:59:59\",\n      \"receivedQty\": 50,\n      \"acceptedQty\": 50,\n      \"rejectedQty\": 0,\n      \"reason\": \"\"\n    }\n  ]\n}" } }
+            },
+            {
+              "name": "Post GRN",
+              "request": { "method": "PUT", "url": { "raw": "{{base_url}}/v1/warehouse/grn/1/post", "host": [ "{{base_url}}" ], "path": [ "v1", "warehouse", "grn", "1", "post" ] } }
+            }
+          ]
+        },
+        {
+          "name": "Put Away",
+          "item": [
+            {
+              "name": "Complete Task",
+              "request": { "method": "PUT", "url": { "raw": "{{base_url}}/v1/warehouse/putaway/1/complete", "host": [ "{{base_url}}" ], "path": [ "v1", "warehouse", "putaway", "1", "complete" ] } }
+            }
+          ]
+        },
+        {
+          "name": "Transfers",
+          "item": [
+             {
+              "name": "Create Transfer",
+              "request": { "method": "POST", "header": [ {"key": "Content-Type", "value": "application/json"} ], "url": { "raw": "{{base_url}}/v1/warehouse/transfers", "host": [ "{{base_url}}" ], "path": [ "v1", "warehouse", "transfers" ] }, "body": { "mode": "raw", "raw": "{\n  \"fromLocationId\": 1,\n  \"toLocationId\": 2,\n  \"items\": [\n    {\n      \"itemId\": 1,\n      \"quantity\": 10\n    }\n  ]\n}" } }
+            },
+            {
+              "name": "Pick Transfer",
+              "request": { "method": "PUT", "url": { "raw": "{{base_url}}/v1/warehouse/transfers/1/pick", "host": [ "{{base_url}}" ], "path": [ "v1", "warehouse", "transfers", "1", "pick" ] } }
+            },
+            {
+              "name": "Ship Transfer",
+              "request": { "method": "PUT", "url": { "raw": "{{base_url}}/v1/warehouse/transfers/1/ship", "host": [ "{{base_url}}" ], "path": [ "v1", "warehouse", "transfers", "1", "ship" ] } }
+            },
+            {
+              "name": "Receive Transfer",
+              "request": { "method": "PUT", "url": { "raw": "{{base_url}}/v1/warehouse/transfers/1/receive", "host": [ "{{base_url}}" ], "path": [ "v1", "warehouse", "transfers", "1", "receive" ] } }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. Clinical & Demand",
+      "item": [
+        {
+          "name": "Replenishment",
+          "item": [
+            {
+              "name": "Create Rule",
+              "request": { "method": "POST", "header": [ {"key": "Content-Type", "value": "application/json"} ], "url": { "raw": "{{base_url}}/v1/replenishment/rules", "host": [ "{{base_url}}" ], "path": [ "v1", "replenishment", "rules" ] }, "body": { "mode": "raw", "raw": "{\n  \"locationId\": 2,\n  \"itemId\": 1,\n  \"minLevel\": 10,\n  \"maxLevel\": 50,\n  \"parLevel\": 25,\n  \"reviewCycle\": \"DAILY\"\n}" } }
+            },
+            {
+              "name": "Generate Suggestions",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/v1/replenishment/suggestions", "host": [ "{{base_url}}" ], "path": [ "v1", "replenishment", "suggestions" ] } }
+            }
+          ]
+        },
+        {
+          "name": "Dispense",
+          "item": [
+            {
+              "name": "Dispense Item",
+              "request": { "method": "POST", "header": [ {"key": "Content-Type", "value": "application/json"} ], "url": { "raw": "{{base_url}}/v1/dispense", "host": [ "{{base_url}}" ], "path": [ "v1", "dispense" ] }, "body": { "mode": "raw", "raw": "{\n  \"locationId\": 2,\n  \"itemId\": 1,\n  \"quantity\": 2,\n  \"targetType\": \"WARD\",\n  \"targetRef\": \"Ward A\",\n  \"dispensedBy\": \"Nurse Joy\"\n}" } }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "6. Audits & Adjustments",
+      "item": [
+        {
+          "name": "Cycle Count",
+          "item": [
+            {
+              "name": "Create Count",
+              "request": { "method": "POST", "header": [ {"key": "Content-Type", "value": "application/json"} ], "url": { "raw": "{{base_url}}/v1/audit/count", "host": [ "{{base_url}}" ], "path": [ "v1", "audit", "count" ] }, "body": { "mode": "raw", "raw": "{\n  \"locationId\": 1,\n  \"cycle\": \"ADHOC\",\n  \"scheduledDate\": \"2026-03-30T10:00:00\"\n}" } }
+            },
+            {
+              "name": "Start Count",
+              "request": { "method": "PUT", "url": { "raw": "{{base_url}}/v1/audit/count/1/start", "host": [ "{{base_url}}" ], "path": [ "v1", "audit", "count", "1", "start" ] } }
+            },
+            {
+              "name": "Post Count",
+              "request": { "method": "PUT", "url": { "raw": "{{base_url}}/v1/audit/count/1/post", "host": [ "{{base_url}}" ], "path": [ "v1", "audit", "count", "1", "post" ] } }
+            }
+          ]
+        },
+        {
+          "name": "Approve Adjustment",
+          "request": { "method": "PUT", "url": { "raw": "{{base_url}}/v1/audit/adjustment/1/approve?approver=Admin", "host": [ "{{base_url}}" ], "path": [ "v1", "audit", "adjustment", "1", "approve" ], "query": [ { "key": "approver", "value": "Admin" } ] } }
+        }
+      ]
+    },
+    {
+      "name": "7. Compliance & Quality",
+      "item": [
+        {
+          "name": "Log Cold Chain",
+          "request": { "method": "POST", "header": [ {"key": "Content-Type", "value": "application/json"} ], "url": { "raw": "{{base_url}}/v1/compliance/cold-chain", "host": [ "{{base_url}}" ], "path": [ "v1", "compliance", "cold-chain" ] }, "body": { "mode": "raw", "raw": "{\n  \"locationId\": 1,\n  \"sensorId\": \"SENSOR-FRIDGE-01\",\n  \"temperatureC\": 5.2,\n  \"status\": \"NORMAL\"\n}" } }
+        },
+        {
+          "name": "Create Recall",
+          "request": { "method": "POST", "header": [ {"key": "Content-Type", "value": "application/json"} ], "url": { "raw": "{{base_url}}/v1/compliance/recalls", "host": [ "{{base_url}}" ], "path": [ "v1", "compliance", "recalls" ] }, "body": { "mode": "raw", "raw": "{\n  \"drugId\": 1,\n  \"reason\": \"Contamination reported by manufacturer\",\n  \"action\": \"RETURN\"\n}" } }
+        },
+        {
+          "name": "Quarantine Lot directly",
+          "request": { "method": "POST", "url": { "raw": "{{base_url}}/v1/compliance/quarantine/1?reason=Damaged Packaging", "host": [ "{{base_url}}" ], "path": [ "v1", "compliance", "quarantine", "1" ], "query": [ { "key": "reason", "value": "Damaged Packaging" } ] } }
+        },
+        {
+          "name": "Release Quarantine",
+          "request": { "method": "PUT", "url": { "raw": "{{base_url}}/v1/compliance/quarantine/1/release", "host": [ "{{base_url}}" ], "path": [ "v1", "compliance", "quarantine", "1", "release" ] } }
+        }
+      ]
+    },
+    {
+      "name": "8. Analytics & Notifications",
+      "item": [
+        {
+          "name": "Reports",
+          "item": [
+            { "name": "Near Expiry Report", "request": { "method": "GET", "url": { "raw": "{{base_url}}/v1/reports/near-expiry", "host": [ "{{base_url}}" ], "path": [ "v1", "reports", "near-expiry" ] } } },
+            { "name": "Stock Valuation", "request": { "method": "GET", "url": { "raw": "{{base_url}}/v1/reports/stock-value", "host": [ "{{base_url}}" ], "path": [ "v1", "reports", "stock-value" ] } } },
+            { "name": "Non-Moving Items", "request": { "method": "GET", "url": { "raw": "{{base_url}}/v1/reports/non-moving", "host": [ "{{base_url}}" ], "path": [ "v1", "reports", "non-moving" ] } } },
+            { "name": "Consumption Pattern", "request": { "method": "GET", "url": { "raw": "{{base_url}}/v1/reports/consumption", "host": [ "{{base_url}}" ], "path": [ "v1", "reports", "consumption" ] } } }
+          ]
+        },
+        {
+          "name": "Notifications",
+          "item": [
+            { "name": "Get User Notifications", "request": { "method": "GET", "url": { "raw": "{{base_url}}/v1/notifications/1", "host": [ "{{base_url}}" ], "path": [ "v1", "notifications", "1" ] } } },
+            { "name": "Mark Read", "request": { "method": "PUT", "url": { "raw": "{{base_url}}/v1/notifications/1/read", "host": [ "{{base_url}}" ], "path": [ "v1", "notifications", "1", "read" ] } } },
+            { "name": "Dismiss", "request": { "method": "PUT", "url": { "raw": "{{base_url}}/v1/notifications/1/dismiss", "host": [ "{{base_url}}" ], "path": [ "v1", "notifications", "1", "dismiss" ] } } }
+          ]
+        }
+      ]
+    }
+  ]
+}
