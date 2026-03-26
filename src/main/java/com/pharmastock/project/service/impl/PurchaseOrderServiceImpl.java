@@ -1,5 +1,11 @@
 package com.pharmastock.project.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
 import com.pharmastock.project.dto.POItemDTO;
 import com.pharmastock.project.dto.PurchaseOrderDTO;
 import com.pharmastock.project.entity.Item;
@@ -16,12 +22,8 @@ import com.pharmastock.project.repository.LocationRepository;
 import com.pharmastock.project.repository.PurchaseOrderRepository;
 import com.pharmastock.project.repository.VendorRepository;
 import com.pharmastock.project.service.PurchaseOrderService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -75,7 +77,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 poItems.add(poItem);
             }
         }
-        
+
         po.setItems(poItems);
         PurchaseOrder savedPO = poRepository.save(po);
         return mapToDTO(savedPO);

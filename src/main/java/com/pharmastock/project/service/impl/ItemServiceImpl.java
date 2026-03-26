@@ -1,5 +1,10 @@
 package com.pharmastock.project.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
 import com.pharmastock.project.dto.ItemDTO;
 import com.pharmastock.project.entity.Drug;
 import com.pharmastock.project.entity.Item;
@@ -11,11 +16,8 @@ import com.pharmastock.project.repository.DrugRepository;
 import com.pharmastock.project.repository.ItemRepository;
 import com.pharmastock.project.repository.UoMRepository;
 import com.pharmastock.project.service.ItemService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -89,7 +91,7 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new ResourceNotFoundException("UoM not found with id: " + dto.getUomId()));
 
         // In a real scenario we might check inventory before changing UoM but as per rules, assuming validation method
-        
+
         existingItem.setPackSize(dto.getPackSize());
         existingItem.setUom(uom);
         existingItem.setConversionToEach(dto.getConversionToEach());

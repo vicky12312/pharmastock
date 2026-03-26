@@ -1,13 +1,15 @@
 package com.pharmastock.project.service.impl;
 
+import org.springframework.stereotype.Service;
+
 import com.pharmastock.project.dto.ReplenishmentRuleDTO;
 import com.pharmastock.project.entity.Item;
 import com.pharmastock.project.entity.ReplenishmentRule;
 import com.pharmastock.project.repository.ItemRepository;
 import com.pharmastock.project.repository.ReplenishmentRuleRepository;
 import com.pharmastock.project.service.ReplenishmentService;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +30,7 @@ public class ReplenishmentServiceImpl implements ReplenishmentService {
                 .reviewCycle(dto.getReviewCycle())
                 .build();
         ReplenishmentRule saved = ruleRepository.save(rule);
-        
+
         return ReplenishmentRuleDTO.builder()
                 .ruleId(saved.getRuleId())
                 .locationId(saved.getLocationId())

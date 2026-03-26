@@ -1,6 +1,7 @@
 package com.pharmastock.project.dto;
 
 import com.pharmastock.project.entity.Role;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

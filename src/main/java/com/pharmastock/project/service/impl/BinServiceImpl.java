@@ -1,5 +1,10 @@
 package com.pharmastock.project.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
 import com.pharmastock.project.dto.BinDTO;
 import com.pharmastock.project.entity.Bin;
 import com.pharmastock.project.entity.Location;
@@ -9,11 +14,8 @@ import com.pharmastock.project.exception.ValidationException;
 import com.pharmastock.project.repository.BinRepository;
 import com.pharmastock.project.repository.LocationRepository;
 import com.pharmastock.project.service.BinService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

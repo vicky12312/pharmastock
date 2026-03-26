@@ -1,22 +1,33 @@
 package com.pharmastock.project.service.impl;
 
-import com.pharmastock.project.dto.TransferItemDTO;
-import com.pharmastock.project.dto.TransferOrderDTO;
-import com.pharmastock.project.entity.*;
-import com.pharmastock.project.entity.enums.TransferStatus;
-import com.pharmastock.project.entity.enums.TxnType;
-import com.pharmastock.project.exception.ResourceNotFoundException;
-import com.pharmastock.project.exception.ValidationException;
-import com.pharmastock.project.repository.*;
-import com.pharmastock.project.service.TransferService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.pharmastock.project.dto.TransferItemDTO;
+import com.pharmastock.project.dto.TransferOrderDTO;
+import com.pharmastock.project.entity.Bin;
+import com.pharmastock.project.entity.InventoryBalance;
+import com.pharmastock.project.entity.Item;
+import com.pharmastock.project.entity.StockTransaction;
+import com.pharmastock.project.entity.TransferItem;
+import com.pharmastock.project.entity.TransferOrder;
+import com.pharmastock.project.entity.enums.TransferStatus;
+import com.pharmastock.project.entity.enums.TxnType;
+import com.pharmastock.project.exception.ResourceNotFoundException;
+import com.pharmastock.project.exception.ValidationException;
+import com.pharmastock.project.repository.InventoryBalanceRepository;
+import com.pharmastock.project.repository.ItemRepository;
+import com.pharmastock.project.repository.StockTransactionRepository;
+import com.pharmastock.project.repository.TransferItemRepository;
+import com.pharmastock.project.repository.TransferOrderRepository;
+import com.pharmastock.project.service.TransferService;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -68,7 +79,9 @@ public class TransferServiceImpl implements TransferService {
     @Transactional
     public void pickTransfer(Long toId) {
         TransferOrder to = toRepository.findById(toId).orElseThrow();
-        if (to.getStatus() != TransferStatus.OPEN) throw new ValidationException("Only OPEN transfers can be picked");
+        if (to.getStatus() != TransferStatus.OPEN) {
+			throw new ValidationException("Only OPEN transfers can be picked");
+		}
 
         for (TransferItem ti : to.getItems()) {
             InventoryBalance sourceBalance = balanceRepository.findByItemItemId(ti.getItem().getItemId()).stream()
@@ -99,7 +112,9 @@ public class TransferServiceImpl implements TransferService {
     @Override
     public void shipTransfer(Long toId) {
         TransferOrder to = toRepository.findById(toId).orElseThrow();
-        if (to.getStatus() != TransferStatus.PICKED) throw new ValidationException("Only PICKED transfers can be shipped");
+        if (to.getStatus() != TransferStatus.PICKED) {
+			throw new ValidationException("Only PICKED transfers can be shipped");
+		}
         to.setStatus(TransferStatus.SHIPPED);
         toRepository.save(to);
     }
@@ -108,7 +123,9 @@ public class TransferServiceImpl implements TransferService {
     @Transactional
     public void receiveTransfer(Long toId) {
         TransferOrder to = toRepository.findById(toId).orElseThrow();
-        if (to.getStatus() != TransferStatus.SHIPPED) throw new ValidationException("Only SHIPPED transfers can be received");
+        if (to.getStatus() != TransferStatus.SHIPPED) {
+			throw new ValidationException("Only SHIPPED transfers can be received");
+		}
 
         for (TransferItem ti : to.getItems()) {
             InventoryBalance destBalance = balanceRepository.findByItemItemId(ti.getItem().getItemId()).stream()
@@ -125,7 +142,7 @@ public class TransferServiceImpl implements TransferService {
                             .reservedQty(0)
                             .build();
                     });
-            
+
             destBalance.setQuantityOnHand(destBalance.getQuantityOnHand() + ti.getQuantity());
             balanceRepository.save(destBalance);
 

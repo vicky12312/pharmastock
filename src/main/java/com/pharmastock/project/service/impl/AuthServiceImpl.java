@@ -1,18 +1,19 @@
 package com.pharmastock.project.service.impl;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.pharmastock.project.dto.AuthRequest;
 import com.pharmastock.project.dto.AuthResponse;
 import com.pharmastock.project.dto.RegisterRequest;
 import com.pharmastock.project.entity.User;
 import com.pharmastock.project.repository.UserRepository;
-import com.pharmastock.project.security.CustomUserDetails;
 import com.pharmastock.project.security.JwtUtil;
 import com.pharmastock.project.service.AuthService;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -38,15 +39,10 @@ public class AuthServiceImpl implements AuthService {
 
         userRepository.save(user);
 
-        CustomUserDetails userDetails = new CustomUserDetails(user);
-        String jwtToken = jwtUtil.generateToken(userDetails);
+        String jwtToken = jwtUtil.generateToken(user.getEmail());
 
         return AuthResponse.builder()
                 .token(jwtToken)
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .role(user.getRole())
                 .build();
     }
 
@@ -62,15 +58,10 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        CustomUserDetails userDetails = new CustomUserDetails(user);
-        String jwtToken = jwtUtil.generateToken(userDetails);
+        String jwtToken = jwtUtil.generateToken(user.getEmail());
 
         return AuthResponse.builder()
                 .token(jwtToken)
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .role(user.getRole())
                 .build();
     }
 }

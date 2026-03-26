@@ -1,8 +1,8 @@
 package com.pharmastock.project.service;
 
-import com.pharmastock.project.dto.DrugDTO;
-
 import java.util.List;
+
+import com.pharmastock.project.dto.DrugDTO;
 
 public interface DrugService {
     DrugDTO createDrug(DrugDTO dto);

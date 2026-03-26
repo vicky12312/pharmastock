@@ -1,13 +1,15 @@
 package com.pharmastock.project.service.impl;
 
+import java.time.LocalDateTime;
+
+import org.springframework.stereotype.Service;
+
 import com.pharmastock.project.dto.InventoryReportDTO;
 import com.pharmastock.project.entity.InventoryReport;
 import com.pharmastock.project.repository.InventoryReportRepository;
 import com.pharmastock.project.service.ReportService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +44,7 @@ public class ReportServiceImpl implements ReportService {
                 .generatedDate(LocalDateTime.now())
                 .build();
         InventoryReport saved = reportRepository.save(report);
-        
+
         return InventoryReportDTO.builder()
                 .reportId(saved.getReportId())
                 .scope(saved.getScope())

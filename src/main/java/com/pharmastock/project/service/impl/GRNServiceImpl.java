@@ -1,23 +1,45 @@
 package com.pharmastock.project.service.impl;
 
-import com.pharmastock.project.dto.GRNItemDTO;
-import com.pharmastock.project.dto.GoodsReceiptDTO;
-import com.pharmastock.project.entity.*;
-import com.pharmastock.project.entity.enums.*;
-import com.pharmastock.project.exception.ResourceNotFoundException;
-import com.pharmastock.project.exception.ValidationException;
-import com.pharmastock.project.repository.*;
-import com.pharmastock.project.service.GRNService;
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import com.pharmastock.project.dto.GRNItemDTO;
+import com.pharmastock.project.dto.GoodsReceiptDTO;
+import com.pharmastock.project.entity.Bin;
+import com.pharmastock.project.entity.GRNItem;
+import com.pharmastock.project.entity.GoodsReceipt;
+import com.pharmastock.project.entity.InventoryBalance;
+import com.pharmastock.project.entity.InventoryLot;
+import com.pharmastock.project.entity.Item;
+import com.pharmastock.project.entity.POItem;
+import com.pharmastock.project.entity.PurchaseOrder;
+import com.pharmastock.project.entity.PutAwayTask;
+import com.pharmastock.project.entity.StockTransaction;
+import com.pharmastock.project.entity.enums.GRNStatus;
+import com.pharmastock.project.entity.enums.LotStatus;
+import com.pharmastock.project.entity.enums.POStatus;
+import com.pharmastock.project.entity.enums.TaskStatus;
+import com.pharmastock.project.entity.enums.TxnType;
+import com.pharmastock.project.exception.ResourceNotFoundException;
+import com.pharmastock.project.exception.ValidationException;
+import com.pharmastock.project.repository.BinRepository;
+import com.pharmastock.project.repository.GRNItemRepository;
+import com.pharmastock.project.repository.GoodsReceiptRepository;
+import com.pharmastock.project.repository.InventoryBalanceRepository;
+import com.pharmastock.project.repository.InventoryLotRepository;
+import com.pharmastock.project.repository.ItemRepository;
+import com.pharmastock.project.repository.POItemRepository;
+import com.pharmastock.project.repository.PurchaseOrderRepository;
+import com.pharmastock.project.repository.PutAwayTaskRepository;
+import com.pharmastock.project.repository.StockTransactionRepository;
+import com.pharmastock.project.service.GRNService;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +71,7 @@ public class GRNServiceImpl implements GRNService {
                 .receivedDate(dto.getReceivedDate() != null ? dto.getReceivedDate() : LocalDateTime.now())
                 .status(GRNStatus.OPEN)
                 .build();
-                
+
         GoodsReceipt savedGrn = grnRepository.save(grn);
 
         if (dto.getItems() != null) {
@@ -88,7 +110,7 @@ public class GRNServiceImpl implements GRNService {
     public GoodsReceiptDTO getGRNById(Long id) {
         GoodsReceipt grn = grnRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("GRN not found"));
-        
+
         List<GRNItemDTO> items = grnItemRepository.findByGrnGrnId(id).stream()
                 .map(i -> GRNItemDTO.builder()
                         .grnItemId(i.getGrnItemId())
@@ -129,7 +151,7 @@ public class GRNServiceImpl implements GRNService {
         }
 
         Long locationId = grn.getPurchaseOrder().getLocation().getLocationId();
-        
+
         // Find default receiving bin or just the first bin for the location for simplicity in this logic
         List<Bin> locationBins = binRepository.findAll().stream()
                 .filter(b -> b.getLocation().getLocationId().equals(locationId))
@@ -167,7 +189,7 @@ public class GRNServiceImpl implements GRNService {
                                     .reservedQty(0)
                                     .build();
                         });
-                
+
                 balance.setQuantityOnHand(balance.getQuantityOnHand() + item.getAcceptedQty());
                 balanceRepository.save(balance);
 

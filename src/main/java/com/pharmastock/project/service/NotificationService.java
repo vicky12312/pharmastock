@@ -1,8 +1,8 @@
 package com.pharmastock.project.service;
+import java.util.List;
+
 import com.pharmastock.project.dto.NotificationDTO;
 import com.pharmastock.project.entity.enums.NotificationCategory;
-
-import java.util.List;
 
 public interface NotificationService {
     void createNotification(Long userId, String message, NotificationCategory category);

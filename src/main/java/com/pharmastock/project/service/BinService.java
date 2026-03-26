@@ -1,7 +1,8 @@
 package com.pharmastock.project.service;
 
-import com.pharmastock.project.dto.BinDTO;
 import java.util.List;
+
+import com.pharmastock.project.dto.BinDTO;
 
 public interface BinService {
     BinDTO createBin(BinDTO dto);

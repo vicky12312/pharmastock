@@ -1,5 +1,12 @@
 package com.pharmastock.project.service.impl;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
 import com.pharmastock.project.dto.InventoryLotDTO;
 import com.pharmastock.project.entity.ExpiryWatch;
 import com.pharmastock.project.entity.InventoryLot;
@@ -8,13 +15,8 @@ import com.pharmastock.project.entity.enums.WatchStatus;
 import com.pharmastock.project.repository.ExpiryWatchRepository;
 import com.pharmastock.project.repository.InventoryLotRepository;
 import com.pharmastock.project.service.InventoryService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +37,7 @@ public class InventoryServiceImpl implements InventoryService {
     public void checkExpiryWatches() {
         LocalDate today = LocalDate.now();
         List<InventoryLot> allLots = lotRepository.findAll();
-        
+
         for (InventoryLot lot : allLots) {
             if (lot.getStatus() == LotStatus.AVAILABLE) {
                 long days = ChronoUnit.DAYS.between(today, lot.getExpiryDate());
@@ -47,7 +49,7 @@ public class InventoryServiceImpl implements InventoryService {
                             .status(WatchStatus.OPEN)
                             .build();
                     watchRepository.save(watch);
-                    
+
                     // Auto quarantine if expired
                     if (days < 0) {
                         lot.setStatus(LotStatus.QUARANTINE);
